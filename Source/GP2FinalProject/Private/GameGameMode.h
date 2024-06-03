@@ -14,4 +14,8 @@ class AGameGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+private:
+
+	virtual void StartPlay() override;
+
 };

@@ -31,6 +31,11 @@ void APlayerCharacter::BeginPlay()
 
 	// Make sure the player using this mesh cannot see it
 	GetMesh()->SetOwnerNoSee(true);
+}
+
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Get the controller of this player
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
@@ -49,11 +54,6 @@ void APlayerCharacter::BeginPlay()
 			}
 		}
 	}
-}
-
-void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	// Bind the input actions to their respective functions
 	UEnhancedInputComponent* Input = Cast<UEnhancedInputComponent>(PlayerInputComponent);
