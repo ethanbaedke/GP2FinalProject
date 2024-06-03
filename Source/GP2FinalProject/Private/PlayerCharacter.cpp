@@ -3,6 +3,8 @@
 
 #include "PlayerCharacter.h"
 
+#include "ItemDataAsset.h"
+
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 
@@ -11,9 +13,12 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 
+#include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
+
 APlayerCharacter::APlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	// Setup spring arm component that will hold items
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("Spring Arm Component"));
@@ -23,6 +28,14 @@ APlayerCharacter::APlayerCharacter()
 	// Setup first person camera
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera Component"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	// Setup the item mesh that the local player will see
+	PrivateItemMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Private Item Mesh Component"));
+	PrivateItemMeshComponent->SetupAttachment(SpringArmComponent);
+
+	// Setup the item mesh that all other players will see
+	PublicItemMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Public Item Mesh Component"));
+	PublicItemMeshComponent->SetupAttachment(RootComponent);
 }
 
 void APlayerCharacter::BeginPlay()
@@ -31,6 +44,60 @@ void APlayerCharacter::BeginPlay()
 
 	// Make sure the player using this mesh cannot see it
 	GetMesh()->SetOwnerNoSee(true);
+
+	// Make sure the only the player can see their private item
+	PrivateItemMeshComponent->SetOnlyOwnerSee(true);
+
+	// Make sure the player cannot see their public item
+	PublicItemMeshComponent->SetOwnerNoSee(true);
+
+	// Create the player overlay UI
+	PlayerOverlayWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerOverlayWidgetClass);
+
+	// If the controller is already connected, give that player the UI
+	AddPlayerOverlayWidgetToViewport(PlayerOverlayWidget);
+}
+
+
+void APlayerCharacter::Tick(float DeltaTime)
+{
+	UseItemTimer -= DeltaTime;
+}
+
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	// Put the UI on the new players screen
+	AddPlayerOverlayWidgetToViewport(PlayerOverlayWidget);
+}
+
+void APlayerCharacter::AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget)
+{
+	if (UserWidget)
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+		{
+			int32 ControllerID = UGameplayStatics::GetPlayerControllerID(PlayerController);
+			UE_LOG(LogTemp, Warning, TEXT("%d"), ControllerID);
+
+			FVector2D ViewportSize;
+			GEngine->GameViewport->GetViewportSize(ViewportSize);
+
+			if (ControllerID == 0)
+			{
+				PlayerOverlayWidget->SetRenderTranslation(FVector2D(0, -ViewportSize.Y / 2));
+				PlayerOverlayWidget->SetRenderScale(FVector2D(.5f, .5f));
+			}
+			else
+			{
+				PlayerOverlayWidget->SetRenderTranslation(FVector2D(0, ViewportSize.Y / 2));
+				PlayerOverlayWidget->SetRenderScale(FVector2D(.5f, .5f));
+			}
+
+			PlayerOverlayWidget->AddToViewport();
+		}
+	}
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -71,6 +138,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		{
 			Input->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APlayerCharacter::MoveCallback);
 		}
+		if (UseItemAction)
+		{
+			Input->BindAction(UseItemAction, ETriggerEvent::Triggered, this, &APlayerCharacter::UseItemCallback);
+		}
 	}
 }
 
@@ -107,5 +178,14 @@ void APlayerCharacter::MoveCallback(const FInputActionValue& Value)
 	// Add movement in the directions of our found axis with the amounts of our input
 	AddMovementInput(Forward, InputValue.Y);
 	AddMovementInput(Right, InputValue.X);
+}
+
+void APlayerCharacter::UseItemCallback()
+{
+	if (UseItemTimer <= 0)
+	{
+		ItemDataAsset->Activate(this);
+		UseItemTimer = 1.f / ItemDataAsset->GetActivationRate();
+	}
 }
 
