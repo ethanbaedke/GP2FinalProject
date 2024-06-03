@@ -17,10 +17,19 @@ struct FInputActionValue;
 
 class UUserWidget;
 
+class UHealthComponent;
+
+// Called when the player runs out of health
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDeath, APlayerController*)
+
 UCLASS()
 class APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+
+	FOnPlayerDeath OnPlayerDeath;
 
 private:
 
@@ -34,10 +43,16 @@ private:
 
 	virtual void PossessedBy(AController* NewController) override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	// Item
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UItemDataAsset> ItemDataAsset;
 
+	float UseItemTimer = 0.f;
 
+
+	// Components
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCameraComponent> CameraComponent;
 
@@ -51,6 +66,7 @@ private:
 	TObjectPtr<USkeletalMeshComponent> PublicItemMeshComponent;
 
 
+	// Input
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> JumpAction;
 
@@ -71,9 +87,7 @@ private:
 	void MoveCallback(const FInputActionValue& Value);
 	void UseItemCallback();
 
-	float UseItemTimer = 0.f;
-
-
+	// UI
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> PlayerOverlayWidgetClass;
 
@@ -82,5 +96,12 @@ private:
 	// Adds the UI Overlay for players to those players viewports, scaled to fit their viewports
 	// This currently only supports two players using the vertical splitscreen layout
 	void AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget);
+
+
+	// Health
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UHealthComponent> HealthComponent;
+
+	void OutOfHealthCallback();
 
 };

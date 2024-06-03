@@ -18,4 +18,6 @@ private:
 
 	virtual void StartPlay() override;
 
+	void PlayerDeathCallback(APlayerController* PlayerController);
+
 };

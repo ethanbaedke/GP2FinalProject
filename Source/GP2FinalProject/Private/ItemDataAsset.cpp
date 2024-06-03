@@ -3,6 +3,6 @@
 
 #include "ItemDataAsset.h"
 
-void UItemDataAsset::Activate(const APawn* Pawn)
+void UItemDataAsset::Activate(APawn* Pawn)
 {
 }

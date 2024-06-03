@@ -16,7 +16,7 @@ class UItemDataAsset : public UDataAsset
 	
 public:
 
-	virtual void Activate(const APawn* Pawn);
+	virtual void Activate(APawn* Pawn);
 
 	int32 GetActivationRate() { return ActivationRate; }
 

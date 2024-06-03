@@ -16,11 +16,14 @@ class UWeaponDataAsset : public UItemDataAsset
 	
 public:
 
-	virtual void Activate(const APawn* Pawn) override;
+	virtual void Activate(APawn* Pawn) override;
 
 private:
 
 	UPROPERTY(EditAnywhere)
 	int32 Range;
+
+	UPROPERTY(EditAnywhere)
+	int32 Damage;
 
 };

@@ -3,7 +3,9 @@
 
 #include "WeaponDataAsset.h"
 
-void UWeaponDataAsset::Activate(const APawn* Pawn)
+#include "Kismet/GameplayStatics.h"
+
+void UWeaponDataAsset::Activate(APawn* Pawn)
 {
 	Super::Activate(Pawn);
 
@@ -37,6 +39,9 @@ void UWeaponDataAsset::Activate(const APawn* Pawn)
 		// Run if we hit a pawn
 		if (bHit && Cast<APawn>(HitResult.GetActor()))
 		{
+			// Damage the pawn we hit
+			UGameplayStatics::ApplyDamage(HitResult.GetActor(), Damage, PlayerController, Pawn, nullptr);
+
 			// Draw line to the hit location and sphere at the hit location
 			DrawDebugLine(Pawn->GetWorld(), Pawn->GetActorLocation(), HitResult.Location, FColor::Green, false, 2.f, 0, 5.f);
 			DrawDebugSphere(Pawn->GetWorld(), HitResult.Location, 10.0f, 12, FColor::Red, false, 2.0f);

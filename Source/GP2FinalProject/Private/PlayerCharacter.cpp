@@ -16,6 +16,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "HealthComponent.h"
+
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -36,6 +38,9 @@ APlayerCharacter::APlayerCharacter()
 	// Setup the item mesh that all other players will see
 	PublicItemMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Public Item Mesh Component"));
 	PublicItemMeshComponent->SetupAttachment(RootComponent);
+
+	// Setup health component
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
 }
 
 void APlayerCharacter::BeginPlay()
@@ -56,6 +61,9 @@ void APlayerCharacter::BeginPlay()
 
 	// If the controller is already connected, give that player the UI
 	AddPlayerOverlayWidgetToViewport(PlayerOverlayWidget);
+
+	// Subscribe to the delegate for running out of health
+	HealthComponent->OnOutOfHealth.BindUObject(this, &APlayerCharacter::OutOfHealthCallback);
 }
 
 
@@ -72,6 +80,15 @@ void APlayerCharacter::PossessedBy(AController* NewController)
 	AddPlayerOverlayWidgetToViewport(PlayerOverlayWidget);
 }
 
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float TotalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	HealthComponent->ModifyHealth(-TotalDamage);
+
+	return TotalDamage;
+}
+
 void APlayerCharacter::AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget)
 {
 	if (UserWidget)
@@ -79,7 +96,6 @@ void APlayerCharacter::AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget)
 		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 		{
 			int32 ControllerID = UGameplayStatics::GetPlayerControllerID(PlayerController);
-			UE_LOG(LogTemp, Warning, TEXT("%d"), ControllerID);
 
 			FVector2D ViewportSize;
 			GEngine->GameViewport->GetViewportSize(ViewportSize);
@@ -189,3 +205,13 @@ void APlayerCharacter::UseItemCallback()
 	}
 }
 
+void APlayerCharacter::OutOfHealthCallback()
+{
+	if (OnPlayerDeath.IsBound())
+	{
+		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+		{
+			OnPlayerDeath.Broadcast(PlayerController);
+		}
+	}
+}
