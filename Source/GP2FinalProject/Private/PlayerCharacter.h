@@ -19,6 +19,8 @@ class UUserWidget;
 
 class UHealthComponent;
 
+class UAIPerceptionStimuliSourceComponent;
+
 // Called when the player runs out of health
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDeath, APlayerController*)
 
@@ -64,6 +66,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<USkeletalMeshComponent> PublicItemMeshComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> PerceptionSourceComponent;
 
 
 	// Input

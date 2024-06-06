@@ -6,9 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "GameGameMode.generated.h"
 
-/**
- * 
- */
+class AEnemyCharacter;
+
 UCLASS()
 class AGameGameMode : public AGameModeBase
 {
@@ -18,6 +17,11 @@ private:
 
 	virtual void StartPlay() override;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AEnemyCharacter> EnemyCharacterClass;
+
 	void PlayerDeathCallback(APlayerController* PlayerController);
+
+	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter);
 
 };

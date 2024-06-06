@@ -18,6 +18,9 @@
 
 #include "HealthComponent.h"
 
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
+
 APlayerCharacter::APlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -41,6 +44,11 @@ APlayerCharacter::APlayerCharacter()
 
 	// Setup health component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
+
+	// Setup AI perception stimuli source component so enemies can see the player
+	PerceptionSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AI Perception Stimuli Source Component"));
+	PerceptionSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
+	PerceptionSourceComponent->RegisterWithPerceptionSystem();
 }
 
 void APlayerCharacter::BeginPlay()
