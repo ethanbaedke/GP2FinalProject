@@ -39,7 +39,7 @@ void AGameGameMode::StartPlay()
 
 	for (int32 i = -1000; i <= 1000; i += 1000)
 	{
-		AEnemyCharacter* Enemy = GetWorld()->SpawnActor<AEnemyCharacter>(EnemyCharacterClass, FVector(0, i, 100), FRotator::ZeroRotator, SpawnParams);
+		AEnemyCharacter* Enemy = GetWorld()->SpawnActor<AEnemyCharacter>(AEnemyCharacter::StaticClass(), FVector(0, i, 100), FRotator::ZeroRotator, SpawnParams);
 
 		Enemy->OnEnemyDeath.AddUObject(this, &AGameGameMode::EnemyDeathCallback);
 	}

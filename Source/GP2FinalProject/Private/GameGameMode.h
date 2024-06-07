@@ -17,9 +17,6 @@ private:
 
 	virtual void StartPlay() override;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AEnemyCharacter> EnemyCharacterClass;
-
 	void PlayerDeathCallback(APlayerController* PlayerController);
 
 	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter);
