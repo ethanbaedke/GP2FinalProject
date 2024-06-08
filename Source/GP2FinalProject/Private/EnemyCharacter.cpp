@@ -62,4 +62,6 @@ void AEnemyCharacter::OutOfHealthCallback()
 	{
 		OnEnemyDeath.Broadcast(this);
 	}
+
+	Destroy();
 }

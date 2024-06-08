@@ -32,17 +32,6 @@ void AGameGameMode::StartPlay()
 			}
 		}
 	}
-
-	// Spawn enemies
-
-	FActorSpawnParameters SpawnParams;
-
-	for (int32 i = -1000; i <= 1000; i += 1000)
-	{
-		AEnemyCharacter* Enemy = GetWorld()->SpawnActor<AEnemyCharacter>(AEnemyCharacter::StaticClass(), FVector(0, i, 100), FRotator::ZeroRotator, SpawnParams);
-
-		Enemy->OnEnemyDeath.AddUObject(this, &AGameGameMode::EnemyDeathCallback);
-	}
 }
 
 void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)
@@ -69,5 +58,5 @@ void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)
 
 void AGameGameMode::EnemyDeathCallback(AEnemyCharacter* EnemyCharacter)
 {
-	EnemyCharacter->Destroy();
+	
 }
