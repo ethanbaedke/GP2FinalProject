@@ -27,6 +27,8 @@ AEnemyCharacter::AEnemyCharacter()
 
 			FTransform Transform = FTransform(FRotator(0, -90, 0), FVector(0, 0, -50), FVector(.1, .1, .1));
 			MeshComp->SetRelativeTransform(Transform);
+
+			MeshComp->SetCollisionProfileName(FName("NoCollision"));
 		}
 	}
 

@@ -105,17 +105,16 @@ void APlayerCharacter::AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget)
 		{
 			int32 ControllerID = UGameplayStatics::GetPlayerControllerID(PlayerController);
 
-			FVector2D ViewportSize;
-			GEngine->GameViewport->GetViewportSize(ViewportSize);
+			FVector2D ViewportSize = GEngine->GameViewport->Viewport->GetSizeXY();
 
 			if (ControllerID == 0)
 			{
-				PlayerOverlayWidget->SetRenderTranslation(FVector2D(0, -ViewportSize.Y / 2));
+				PlayerOverlayWidget->SetAnchorsInViewport(FAnchors(0.f, 0.f, 1.f, .5f));
 				PlayerOverlayWidget->SetRenderScale(FVector2D(.5f, .5f));
 			}
 			else
 			{
-				PlayerOverlayWidget->SetRenderTranslation(FVector2D(0, ViewportSize.Y / 2));
+				PlayerOverlayWidget->SetAnchorsInViewport(FAnchors(0.f, .5f, 1.f, 1.f));
 				PlayerOverlayWidget->SetRenderScale(FVector2D(.5f, .5f));
 			}
 

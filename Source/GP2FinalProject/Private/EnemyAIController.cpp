@@ -22,10 +22,10 @@ AEnemyAIController::AEnemyAIController()
 	// Set up sight configuration for perception component
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("AI Sense Config - Sight"));
-	SightConfig->SightRadius = 2000.f;
-	SightConfig->LoseSightRadius = 2000.f;
+	SightConfig->SightRadius = 1000.f;
+	SightConfig->LoseSightRadius = 1000.f;
 	SightConfig->SetMaxAge(0.f);
-	SightConfig->PeripheralVisionAngleDegrees = 90.f;
+	SightConfig->PeripheralVisionAngleDegrees = 360.f;
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
 	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
