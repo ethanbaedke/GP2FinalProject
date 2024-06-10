@@ -28,4 +28,6 @@ private:
 
 	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter);
 
+	int32 EnemiesKilled = 0;
+
 };

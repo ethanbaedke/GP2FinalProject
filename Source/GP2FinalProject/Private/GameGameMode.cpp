@@ -10,6 +10,8 @@
 
 #include "Blueprint/UserWidget.h"
 
+#include "EngineUtils.h"
+
 void AGameGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -32,6 +34,17 @@ void AGameGameMode::StartPlay()
 			{
 				PlayerCharacter->OnPlayerDeath.AddUObject(this, &AGameGameMode::PlayerDeathCallback);
 			}
+		}
+	}
+
+	// Subscribe to enemies dying
+	for (TActorIterator<AEnemyCharacter> It(GetWorld()); It; ++It)
+	{
+		AEnemyCharacter* EnemyCharacter = *It;
+
+		if (EnemyCharacter)
+		{
+			EnemyCharacter->OnEnemyDeath.AddUObject(this, &AGameGameMode::EnemyDeathCallback);
 		}
 	}
 
@@ -64,5 +77,12 @@ void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)
 
 void AGameGameMode::EnemyDeathCallback(AEnemyCharacter* EnemyCharacter)
 {
-	
+	EnemiesKilled++;
+
+	UE_LOG(LogTemp, Warning, TEXT("%d"), EnemiesKilled);
+
+	if (EnemiesKilled == 10)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), FName("L_GameOver"));
+	}
 }
