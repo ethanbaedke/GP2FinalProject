@@ -8,6 +8,8 @@
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
 
+#include "Blueprint/UserWidget.h"
+
 void AGameGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -32,6 +34,10 @@ void AGameGameMode::StartPlay()
 			}
 		}
 	}
+
+	// Setup UI overlay
+	UIOverlayWidget = CreateWidget(GetWorld(), UIOverlayWidgetClass);
+	UIOverlayWidget->AddToViewport();
 }
 
 void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)

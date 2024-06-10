@@ -17,15 +17,27 @@ class UHealthComponent : public UActorComponent
 
 public:
 	
+	virtual void BeginPlay() override;
+
 	// Adds the input amount to the current health
 	// Use negative numbers for dealing damage and positive numbers for adding health
 	void ModifyHealth(int32 Amount);
+
+	// Get the current health value
+	UFUNCTION(BlueprintCallable)
+	int32 GetHealth();
+
+	// Get the starting health value
+	UFUNCTION(BlueprintCallable)
+	int32 GetMaxHealth();
 
 	FOnOutOfHealth OnOutOfHealth;
 
 private:
 
 	UPROPERTY(EditAnywhere)
-	int32 Health = 100;
+	int32 StartingHealth = 100;
+
+	int32 CurrentHealth;
 		
 };

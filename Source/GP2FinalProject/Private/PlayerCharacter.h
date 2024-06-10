@@ -15,8 +15,6 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
-class UUserWidget;
-
 class UHealthComponent;
 
 class UAIPerceptionStimuliSourceComponent;
@@ -42,8 +40,6 @@ private:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	virtual void Tick(float DeltaTime) override;
-
-	virtual void PossessedBy(AController* NewController) override;
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -91,16 +87,6 @@ private:
 	void LookCallback(const FInputActionValue& Value);
 	void MoveCallback(const FInputActionValue& Value);
 	void UseItemCallback();
-
-	// UI
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> PlayerOverlayWidgetClass;
-
-	TObjectPtr<UUserWidget> PlayerOverlayWidget;
-
-	// Adds the UI Overlay for players to those players viewports, scaled to fit their viewports
-	// This currently only supports two players using the vertical splitscreen layout
-	void AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget);
 
 
 	// Health

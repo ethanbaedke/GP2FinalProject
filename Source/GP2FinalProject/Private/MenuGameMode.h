@@ -4,28 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "GameGameMode.generated.h"
-
-class AEnemyCharacter;
+#include "MenuGameMode.generated.h"
 
 class UUserWidget;
 
 UCLASS()
-class AGameGameMode : public AGameModeBase
+class AMenuGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-private:
 
-	virtual void StartPlay() override;
+	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIOverlayWidgetClass;
 
 	TObjectPtr<UUserWidget> UIOverlayWidget;
-
-	void PlayerDeathCallback(APlayerController* PlayerController);
-
-	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter);
-
+	
 };

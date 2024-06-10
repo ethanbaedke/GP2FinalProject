@@ -64,12 +64,6 @@ void APlayerCharacter::BeginPlay()
 	// Make sure the player cannot see their public item
 	PublicItemMeshComponent->SetOwnerNoSee(true);
 
-	// Create the player overlay UI
-	PlayerOverlayWidget = CreateWidget<UUserWidget>(GetWorld(), PlayerOverlayWidgetClass);
-
-	// If the controller is already connected, give that player the UI
-	AddPlayerOverlayWidgetToViewport(PlayerOverlayWidget);
-
 	// Subscribe to the delegate for running out of health
 	HealthComponent->OnOutOfHealth.BindUObject(this, &APlayerCharacter::OutOfHealthCallback);
 }
@@ -80,14 +74,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	UseItemTimer -= DeltaTime;
 }
 
-void APlayerCharacter::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-
-	// Put the UI on the new players screen
-	AddPlayerOverlayWidgetToViewport(PlayerOverlayWidget);
-}
-
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float TotalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -95,32 +81,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	HealthComponent->ModifyHealth(-TotalDamage);
 
 	return TotalDamage;
-}
-
-void APlayerCharacter::AddPlayerOverlayWidgetToViewport(UUserWidget* UserWidget)
-{
-	if (UserWidget)
-	{
-		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
-		{
-			int32 ControllerID = UGameplayStatics::GetPlayerControllerID(PlayerController);
-
-			FVector2D ViewportSize = GEngine->GameViewport->Viewport->GetSizeXY();
-
-			if (ControllerID == 0)
-			{
-				PlayerOverlayWidget->SetAnchorsInViewport(FAnchors(0.f, 0.f, 1.f, .5f));
-				PlayerOverlayWidget->SetRenderScale(FVector2D(.5f, .5f));
-			}
-			else
-			{
-				PlayerOverlayWidget->SetAnchorsInViewport(FAnchors(0.f, .5f, 1.f, 1.f));
-				PlayerOverlayWidget->SetRenderScale(FVector2D(.5f, .5f));
-			}
-
-			PlayerOverlayWidget->AddToViewport();
-		}
-	}
 }
 
 void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
