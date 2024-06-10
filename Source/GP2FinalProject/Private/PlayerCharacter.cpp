@@ -16,10 +16,14 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
+
 #include "HealthComponent.h"
 
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+
+#include "Sound/SoundCue.h"
 
 APlayerCharacter::APlayerCharacter()
 {
@@ -41,6 +45,9 @@ APlayerCharacter::APlayerCharacter()
 	// Setup the item mesh that all other players will see
 	PublicItemMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Public Item Mesh Component"));
 	PublicItemMeshComponent->SetupAttachment(RootComponent);
+
+	// Get movement component
+	MovementComponent = FindComponentByClass<UCharacterMovementComponent>();
 
 	// Setup health component
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health Component"));
@@ -71,7 +78,9 @@ void APlayerCharacter::BeginPlay()
 
 void APlayerCharacter::Tick(float DeltaTime)
 {
+	// De-inrement timers
 	UseItemTimer -= DeltaTime;
+	FootstepTimer -= DeltaTime;
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -161,6 +170,17 @@ void APlayerCharacter::MoveCallback(const FInputActionValue& Value)
 	// Add movement in the directions of our found axis with the amounts of our input
 	AddMovementInput(Forward, InputValue.Y);
 	AddMovementInput(Right, InputValue.X);
+
+	// Play footstep sound
+	if (FootstepSound && MovementComponent)
+	{
+		if (FootstepTimer <= 0 && MovementComponent->IsMovingOnGround())
+		{
+			FootstepTimer = FMath::FRandRange(.25f, .33f);
+			float Volume = FMath::FRandRange(.25f, .75f);
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), FootstepSound, GetActorLocation(), Volume);
+		}
+	}
 }
 
 void APlayerCharacter::UseItemCallback()

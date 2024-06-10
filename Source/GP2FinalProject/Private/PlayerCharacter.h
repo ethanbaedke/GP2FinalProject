@@ -15,9 +15,13 @@ class UInputAction;
 class UInputMappingContext;
 struct FInputActionValue;
 
+class UCharacterMovementComponent;
+
 class UHealthComponent;
 
 class UAIPerceptionStimuliSourceComponent;
+
+class USoundCue;
 
 // Called when the player runs out of health
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDeath, APlayerController*)
@@ -89,10 +93,20 @@ private:
 	void UseItemCallback();
 
 
+	// Movement
+	TObjectPtr<UCharacterMovementComponent> MovementComponent;
+
+
 	// Health
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UHealthComponent> HealthComponent;
 
 	void OutOfHealthCallback();
+
+	// Sound
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USoundCue> FootstepSound;
+
+	float FootstepTimer = 0.f;
 
 };

@@ -1,7 +1,11 @@
+UPCOMING CHANGES
+- Increase player jump height
+- Decrease enemy speed
+
 KNOWN BUGS
 - Enemies get stuck on stairs
 - Players get stuck on stairs
-
+- In one case, an enemy got stuck in a wall, and attacked the player from no where near them
 
 # Patch 1
 

@@ -6,9 +6,8 @@
 #include "Engine/DataAsset.h"
 #include "ItemDataAsset.generated.h"
 
-/**
- * 
- */
+class USoundCue;
+
 UCLASS(Abstract)
 class UItemDataAsset : public UDataAsset
 {
@@ -24,5 +23,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	int32 ActivationRate;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USoundCue> ActivationSound;
 
 };
