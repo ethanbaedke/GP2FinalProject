@@ -1,6 +1,9 @@
 TO-DO
 - Increase player jump height
 - Decrease enemy speed
+- Increase footstep volume
+- Decrease gunshot volume
+- Add doors to the sides of the center arena so players cant wander outside the map
 
 KNOWN BUGS
 - Enemies get stuck on stairs
