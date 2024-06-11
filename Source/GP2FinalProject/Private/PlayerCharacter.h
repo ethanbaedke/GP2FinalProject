@@ -24,7 +24,7 @@ class UAIPerceptionStimuliSourceComponent;
 class USoundCue;
 
 // Called when the player runs out of health
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerDeath, APlayerController*)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnPlayerDeath, APlayerController*, AController*)
 
 UCLASS()
 class APlayerCharacter : public ACharacter
@@ -101,7 +101,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UHealthComponent> HealthComponent;
 
-	void OutOfHealthCallback();
+	void OutOfHealthCallback(AController* EventInstigator);
 
 	// Sound
 	UPROPERTY(EditAnywhere)

@@ -87,7 +87,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float TotalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	HealthComponent->ModifyHealth(-TotalDamage);
+	HealthComponent->ModifyHealth(-TotalDamage, EventInstigator);
 
 	return TotalDamage;
 }
@@ -192,13 +192,13 @@ void APlayerCharacter::UseItemCallback()
 	}
 }
 
-void APlayerCharacter::OutOfHealthCallback()
+void APlayerCharacter::OutOfHealthCallback(AController* EventInstigator)
 {
 	if (OnPlayerDeath.IsBound())
 	{
 		if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 		{
-			OnPlayerDeath.Broadcast(PlayerController);
+			OnPlayerDeath.Broadcast(PlayerController, EventInstigator);
 		}
 	}
 }

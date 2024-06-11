@@ -16,6 +16,11 @@ class AGameGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetTargetScore();
+
 private:
 
 	virtual void StartPlay() override;
@@ -25,16 +30,17 @@ private:
 
 	TObjectPtr<UUserWidget> UIOverlayWidget;
 
+	void PlayerDeathCallback(APlayerController* PlayerController, AController* EventInstigator);
+
+	int32 TargetScore = 30;
+
+	// Enemy stuff
 	void SpawnEnemy();
 
-	void PlayerDeathCallback(APlayerController* PlayerController);
-
-	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter);
+	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter, AController* EventInstigator);
 
 	TArray<TObjectPtr<AEnemySpawn>> EnemySpawns;
 
 	FTimerHandle EnemySpawnTimer;
-
-	int32 EnemiesKilled = 0;
 
 };

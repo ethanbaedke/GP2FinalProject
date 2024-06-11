@@ -53,16 +53,16 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 {
 	float TotalDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	HealthComponent->ModifyHealth(-TotalDamage);
+	HealthComponent->ModifyHealth(-TotalDamage, EventInstigator);
 
 	return TotalDamage;
 }
 
-void AEnemyCharacter::OutOfHealthCallback()
+void AEnemyCharacter::OutOfHealthCallback(AController* EventInstigator)
 {
 	if (OnEnemyDeath.IsBound())
 	{
-		OnEnemyDeath.Broadcast(this);
+		OnEnemyDeath.Broadcast(this, EventInstigator);
 	}
 
 	Destroy();

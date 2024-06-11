@@ -8,7 +8,7 @@
 
 class UHealthComponent;
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnEnemyDeath, AEnemyCharacter*)
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnEnemyDeath, AEnemyCharacter*, AController* Instigator)
 
 UCLASS()
 class AEnemyCharacter : public ACharacter
@@ -30,6 +30,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UHealthComponent> HealthComponent;
 
-	void OutOfHealthCallback();
+	void OutOfHealthCallback(AController* EventInstigator);
 
 };

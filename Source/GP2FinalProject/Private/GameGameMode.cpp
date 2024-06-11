@@ -13,6 +13,8 @@
 
 #include "EngineUtils.h"
 
+#include "GameFramework/PlayerState.h"
+
 void AGameGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -60,10 +62,11 @@ void AGameGameMode::StartPlay()
 void AGameGameMode::SpawnEnemy()
 {
 	int32 Index = FMath::RandRange(0, EnemySpawns.Num() - 1);
-	EnemySpawns[Index]->SpawnEnemy();
+	AEnemyCharacter* Enem = EnemySpawns[Index]->SpawnEnemy();
+	Enem->OnEnemyDeath.AddUObject(this, &AGameGameMode::EnemyDeathCallback);
 }
 
-void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)
+void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController, AController* EventInstigator)
 {
 	if (APawn* Pawn = PlayerController->GetPawn())
 	{
@@ -83,16 +86,29 @@ void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)
 		NewPlayerCharacter->OnPlayerDeath.AddUObject(this, &AGameGameMode::PlayerDeathCallback);
 		PlayerController->Possess(NewPlayerCharacter);
 	}
+
+	// If this player was killed by another player, increase that players score
+	if (EventInstigator)
+	{
+		if (APlayerState* PlayerState = EventInstigator->GetPlayerState<APlayerState>())
+		{
+			PlayerState->Score += 3;
+		}
+	}
 }
 
-void AGameGameMode::EnemyDeathCallback(AEnemyCharacter* EnemyCharacter)
+int32 AGameGameMode::GetTargetScore()
 {
-	EnemiesKilled++;
+	return TargetScore;
+}
 
-	UE_LOG(LogTemp, Warning, TEXT("%d"), EnemiesKilled);
-
-	if (EnemiesKilled == 10)
+void AGameGameMode::EnemyDeathCallback(AEnemyCharacter* EnemyCharacter, AController* EventInstigator)
+{
+	if (EventInstigator)
 	{
-		UGameplayStatics::OpenLevel(GetWorld(), FName("L_GameOver"));
+		if (APlayerState* PlayerState = EventInstigator->GetPlayerState<APlayerState>())
+		{
+			PlayerState->Score += 1;
+		}
 	}
 }

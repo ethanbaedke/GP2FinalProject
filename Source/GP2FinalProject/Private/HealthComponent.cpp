@@ -8,7 +8,7 @@ void UHealthComponent::BeginPlay()
 	CurrentHealth = StartingHealth;
 }
 
-void UHealthComponent::ModifyHealth(int32 Amount)
+void UHealthComponent::ModifyHealth(int32 Amount, AController* EventInstigator)
 {
 	// Return if we have no health
 	if (CurrentHealth <= 0) return;
@@ -19,7 +19,7 @@ void UHealthComponent::ModifyHealth(int32 Amount)
 	// If we are out of health fire our out of health event
 	if (CurrentHealth <= 0 && OnOutOfHealth.IsBound())
 	{
-		OnOutOfHealth.Execute();
+		OnOutOfHealth.Execute(EventInstigator);
 	}
 }
 
