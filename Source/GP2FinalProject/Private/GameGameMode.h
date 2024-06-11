@@ -7,6 +7,7 @@
 #include "GameGameMode.generated.h"
 
 class AEnemyCharacter;
+class AEnemySpawn;
 
 class UUserWidget;
 
@@ -24,9 +25,15 @@ private:
 
 	TObjectPtr<UUserWidget> UIOverlayWidget;
 
+	void SpawnEnemy();
+
 	void PlayerDeathCallback(APlayerController* PlayerController);
 
 	void EnemyDeathCallback(AEnemyCharacter* EnemyCharacter);
+
+	TArray<TObjectPtr<AEnemySpawn>> EnemySpawns;
+
+	FTimerHandle EnemySpawnTimer;
 
 	int32 EnemiesKilled = 0;
 

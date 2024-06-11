@@ -7,6 +7,7 @@
 
 #include "PlayerCharacter.h"
 #include "EnemyCharacter.h"
+#include "EnemySpawn.h"
 
 #include "Blueprint/UserWidget.h"
 
@@ -37,20 +38,29 @@ void AGameGameMode::StartPlay()
 		}
 	}
 
-	// Subscribe to enemies dying
-	for (TActorIterator<AEnemyCharacter> It(GetWorld()); It; ++It)
+	// Get enemy spawns
+	for (TActorIterator<AEnemySpawn> It(GetWorld()); It; ++It)
 	{
-		AEnemyCharacter* EnemyCharacter = *It;
+		AEnemySpawn* EnemySpawn = *It;
 
-		if (EnemyCharacter)
+		if (EnemySpawn)
 		{
-			EnemyCharacter->OnEnemyDeath.AddUObject(this, &AGameGameMode::EnemyDeathCallback);
+			EnemySpawns.Add(EnemySpawn);
 		}
 	}
+
+	// Set timer to spawn an enemy every few seconds
+	GetWorld()->GetTimerManager().SetTimer(EnemySpawnTimer, this, &AGameGameMode::SpawnEnemy, 10.f, true, 0.f);
 
 	// Setup UI overlay
 	UIOverlayWidget = CreateWidget(GetWorld(), UIOverlayWidgetClass);
 	UIOverlayWidget->AddToViewport();
+}
+
+void AGameGameMode::SpawnEnemy()
+{
+	int32 Index = FMath::RandRange(0, EnemySpawns.Num() - 1);
+	EnemySpawns[Index]->SpawnEnemy();
 }
 
 void AGameGameMode::PlayerDeathCallback(APlayerController* PlayerController)
