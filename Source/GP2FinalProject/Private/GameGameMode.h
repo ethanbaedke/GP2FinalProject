@@ -9,6 +9,9 @@
 class AEnemyCharacter;
 class AEnemySpawn;
 
+class UAudioComponent;
+class USoundCue;
+
 class UUserWidget;
 
 UCLASS()
@@ -23,7 +26,15 @@ public:
 
 private:
 
+	AGameGameMode();
+
 	virtual void StartPlay() override;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UAudioComponent> AudioComponent;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<USoundCue> MusicSound;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UUserWidget> UIOverlayWidgetClass;

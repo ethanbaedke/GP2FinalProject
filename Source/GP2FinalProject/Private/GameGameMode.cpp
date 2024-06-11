@@ -15,6 +15,17 @@
 
 #include "GameFramework/PlayerState.h"
 
+#include "Components/AudioComponent.h"
+#include "Sound/SoundCue.h"
+
+AGameGameMode::AGameGameMode()
+{
+	// Setup audio component
+	AudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Component"));
+	AudioComponent->SetupAttachment(RootComponent);
+	AudioComponent->bAutoActivate = false;
+}
+
 void AGameGameMode::StartPlay()
 {
 	Super::StartPlay();
@@ -57,6 +68,10 @@ void AGameGameMode::StartPlay()
 	// Setup UI overlay
 	UIOverlayWidget = CreateWidget(GetWorld(), UIOverlayWidgetClass);
 	UIOverlayWidget->AddToViewport();
+
+	// Start music
+	AudioComponent->SetSound(MusicSound);
+	AudioComponent->Play();
 }
 
 void AGameGameMode::SpawnEnemy()
